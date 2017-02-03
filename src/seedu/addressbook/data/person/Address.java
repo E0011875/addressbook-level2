@@ -19,60 +19,96 @@ public class Address {
 
 	private static final int ADDRESS_COMPONENTS = 4;
 
-	public final Block block = new Block();
-	public final Street street = new Street();
-	public final Unit unit = new Unit();
-	public final PostalCode postalCode = new PostalCode();
+	public final Block block;
+	public final Street street;
+	public final Unit unit;
+	public final PostalCode postalCode;
 
 	public final String value;
 	private boolean isPrivate;
 
 	/**
 	 * Represents the Block of a Person's address in the address book.
-	 *
-	 * @param block
-	 *            Block of address
-	 * @throws IllegalValueException
-	 *             if given block string is invalid.
 	 */
 	public class Block {
-		String value;
+
+		private final String value;
+
+		/**
+		 * Validates given block.
+		 *
+		 * @throws IllegalValueException if given block string is invalid.
+		 */
+		public Block(String block) throws IllegalValueException {
+			this.value = block;
+		}
+
+		public String getBlock() {
+			return this.value;
+		}
 	}
 
 	/**
 	 * Represents the Street of a Person's address in the address book.
-	 *
-	 * @param street
-	 *            Street of address
-	 * @throws IllegalValueException
-	 *             if given street string is invalid.
 	 */
 	public class Street {
-		String value;
+
+		private final String value;
+
+		/**
+		 * Validates given street.
+		 *
+		 * @throws IllegalValueException if given street string is invalid.
+		 */
+		public Street(String street) throws IllegalValueException {
+			this.value = street;
+		}
+
+		public String getStreet() {
+			return this.value;
+		}
 	}
 
 	/**
 	 * Represents the Unit of a Person's address in the address book.
-	 *
-	 * @param unit
-	 *            Unit of address
-	 * @throws IllegalValueException
-	 *             if given unit string is invalid.
 	 */
 	public class Unit {
-		String value;
+
+		private final String value;
+
+		/**
+		 * Validates given unit.
+		 *
+		 * @throws IllegalValueException if given unit string is invalid.
+		 */
+		public Unit(String unit) throws IllegalValueException {
+			this.value = unit;
+		}
+
+		public String getUnit() {
+			return this.value;
+		}
 	}
 
 	/**
 	 * Represents the Postal code of a Person's address in the address book.
-	 *
-	 * @param postalCode
-	 *            Postal code of address
-	 * @throws IllegalValueException
-	 *             if given postalCode string is invalid.
 	 */
 	public class PostalCode {
-		String value;
+
+		private final String value;
+
+		/**
+		 * Validates given postalCode.
+		 *
+		 * @throws IllegalValueException if given postalCode string is invalid.
+		 */
+		public PostalCode(String postalCode) throws IllegalValueException {
+			this.value = postalCode;
+		}
+
+		public String getPostalCode() {
+			return this.value;
+		}
 	}
 
 	/**
@@ -86,11 +122,11 @@ public class Address {
 		if (!isValidAddress(trimmedAddress)) {
 			throw new IllegalValueException(MESSAGE_ADDRESS_CONSTRAINTS);
 		}
-		this.block.value = trimmedAddress.split(ADDRESS_VALIDATION_REGEX)[BLOCK_INDEX_IN_ADDRESS];
-		this.street.value = trimmedAddress.split(ADDRESS_VALIDATION_REGEX)[STREET_INDEX_IN_ADDRESS];
-		this.unit.value = trimmedAddress.split(ADDRESS_VALIDATION_REGEX)[UNIT_INDEX_IN_ADDRESS];
-		this.postalCode.value = trimmedAddress.split(ADDRESS_VALIDATION_REGEX)[POSTALCODE_INDEX_IN_ADDRESS];
-		this.value = trimmedAddress;
+		value = trimmedAddress;
+		block = new Block(value.split(ADDRESS_VALIDATION_REGEX)[BLOCK_INDEX_IN_ADDRESS]);
+		street = new Street(value.split(ADDRESS_VALIDATION_REGEX)[STREET_INDEX_IN_ADDRESS]);
+		unit = new Unit(value.split(ADDRESS_VALIDATION_REGEX)[UNIT_INDEX_IN_ADDRESS]);
+		postalCode = new PostalCode(value.split(ADDRESS_VALIDATION_REGEX)[POSTALCODE_INDEX_IN_ADDRESS]);
 	}
 
 	/**
@@ -109,7 +145,8 @@ public class Address {
 	public boolean equals(Object other) {
 		return other == this // short circuit if same object
 				|| (other instanceof Address // instanceof handles nulls
-						&& this.value.equals(((Address) other).value)); // state check
+						&& this.value.equals(((Address) other).value)); // state
+																		// check
 	}
 
 	@Override

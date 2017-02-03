@@ -135,10 +135,7 @@ public class StorageFile {
 
         // create empty file if not found
         } catch (FileNotFoundException fnfe) {
-            final AddressBook empty = new AddressBook();
-            save(empty);
-            return empty;
-
+            throw new StorageOperationException("Error finding file: " + path);
         // other errors
         } catch (IOException ioe) {
             throw new StorageOperationException("Error writing to file: " + path);

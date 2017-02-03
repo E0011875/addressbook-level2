@@ -11,6 +11,7 @@ import javax.xml.bind.Unmarshaller;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -24,6 +25,7 @@ import java.nio.file.Paths;
  * Represents the file used to store address book data.
  */
 public class StorageFile {
+	
 
     /** Default file path used if the user doesn't provide the file name. */
     public static final String DEFAULT_STORAGE_FILEPATH = "addressbook.xml";
@@ -89,13 +91,17 @@ public class StorageFile {
     /**
      * Saves all data to this storage file.
      *
-     * @throws StorageOperationException if there were errors converting and/or storing data to file.
+     * @throws StorageOperationException if there were errors finding storage file, converting and/or storing data to file.
      */
     public void save(AddressBook addressBook) throws StorageOperationException {
 
         /* Note: Note the 'try with resource' statement below.
          * More info: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
          */
+		File storageFile = new File(DEFAULT_STORAGE_FILEPATH);
+		if (!(storageFile.exists())) { 
+			throw new StorageOperationException("Error finding file: " + DEFAULT_STORAGE_FILEPATH);
+		}
         try (final Writer fileWriter =
                      new BufferedWriter(new FileWriter(path.toFile()))) {
 
@@ -135,7 +141,10 @@ public class StorageFile {
 
         // create empty file if not found
         } catch (FileNotFoundException fnfe) {
-            throw new StorageOperationException("Error finding file: " + path);
+            final AddressBook empty = new AddressBook();
+            save(empty);
+            return empty;
+
         // other errors
         } catch (IOException ioe) {
             throw new StorageOperationException("Error writing to file: " + path);

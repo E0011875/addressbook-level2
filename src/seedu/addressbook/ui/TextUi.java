@@ -3,6 +3,7 @@ package seedu.addressbook.ui;
 import static seedu.addressbook.common.Messages.*;
 
 import seedu.addressbook.commands.CommandResult;
+import seedu.addressbook.data.person.Printable;
 import seedu.addressbook.data.person.ReadOnlyPerson;
 
 import java.io.InputStream;
@@ -34,6 +35,9 @@ public class TextUi {
 
     /** Format of a comment input line. Comment lines are silently consumed when reading user input. */
     private static final String COMMENT_LINE_FORMAT_REGEX = "#.*";
+	public static final String PRINTABLE_SEPARATOR = ", ";
+	public static final String REMOVE_TRAILING_COMMA = ",$";
+	public static final String REPLACE_TRAILING_COMMA = "";
 
     private final Scanner in;
     private final PrintStream out;
@@ -164,5 +168,16 @@ public class TextUi {
     private static String getIndexedListItem(int visibleIndex, String listItem) {
         return String.format(MESSAGE_INDEXED_LIST_ITEM, visibleIndex, listItem);
     }
-
+	
+	/**
+     * Returns a concatenated version of the printable strings of each object.
+     */
+	public String getPrintableString(Printable... printables) {
+     	final StringBuilder builder = new StringBuilder();
+     	for (Printable p : printables) {
+     		builder.append(p.getPrintableString() + PRINTABLE_SEPARATOR);
+     	}
+     	builder.replaceAll(REMOVE_TRAILING_COMMA, REPLACE_TRAILING_COMMA);
+     	return builder.toString();
+     }
 }

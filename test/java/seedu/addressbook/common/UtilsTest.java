@@ -4,13 +4,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
 
 public class UtilsTest {
     @Test
-    public void isAnyNull() {
+    public void isAnyNull_objectInAnyParam_false() {
         // empty list
         assertFalse(Utils.isAnyNull());
 
@@ -19,7 +20,18 @@ public class UtilsTest {
         assertFalse(Utils.isAnyNull("test"));
         assertFalse(Utils.isAnyNull(""));
 
-        // non empty list with just one null at the beginning
+        // confirms nulls inside the list are not considered
+        List<Object> nullList = Arrays.asList((Object) null);
+        assertFalse(Utils.isAnyNull(nullList));
+		
+		// confirms nulls inside the list are not considered
+        HashMap<Integer, Object> nullHashMap = new HashMap<Integer, Object>();
+        assertFalse(Utils.isAnyNull(nullHashMap));
+    }
+	
+	@Test
+    public void isAnyNull_nullInAnyParam_true() {
+		// non empty list with just one null at the beginning
         assertTrue(Utils.isAnyNull((Object) null));
         assertTrue(Utils.isAnyNull(null, "", new Object()));
         assertTrue(Utils.isAnyNull(null, new Object(), new Object()));
@@ -31,14 +43,18 @@ public class UtilsTest {
         // non empty list with one null as the last element
         assertTrue(Utils.isAnyNull("", new Object(), null));
         assertTrue(Utils.isAnyNull(new Object(), new Object(), null));
-
-        // confirms nulls inside the list are not considered
-        List<Object> nullList = Arrays.asList((Object) null);
-        assertFalse(Utils.isAnyNull(nullList));
-    }
+		
+		// non empty list with one null as the last element
+        assertTrue(Utils.isAnyNull("", new Object(), null));
+		
+        assertTrue(Utils.isAnyNull(new Object(), new Object(), null));
+        
+		// non empty list with more than one null
+		assertTrue(Utils.isAnyNull(null, null, null));
+	}
 
     @Test
-    public void elementsAreUnique() throws Exception {
+    public void elementsAreUnique_uniqueObjects_true() throws Exception {
         // empty list
         assertAreUnique();
 
@@ -51,7 +67,11 @@ public class UtilsTest {
         // all objects unique
         assertAreUnique("abc", "ab", "a");
         assertAreUnique(1, 2);
-
+		assertAreUnique("abc", 1, (Object) null);
+	}
+	
+	@Test
+    public void elementsAreUnique_someIdenticalObjects_true() throws Exception {
         // some identical objects
         assertNotUnique("abc", "abc");
         assertNotUnique("abc", "", "abc", "ABC");
@@ -60,6 +80,7 @@ public class UtilsTest {
         assertNotUnique(null, 1, new Integer(1));
         assertNotUnique(null, null);
         assertNotUnique(null, "a", "b", null);
+		assertNotUnique(null, (Object) null);
     }
 
     private void assertAreUnique(Object... objects) {

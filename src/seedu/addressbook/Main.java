@@ -1,6 +1,8 @@
 package seedu.addressbook;
 
 import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.data.tag.Tagging;
+import seedu.addressbook.data.tag.Tagging.TagAction;
 import seedu.addressbook.storage.StorageFile.*;
 
 import seedu.addressbook.commands.*;
@@ -22,7 +24,10 @@ public class Main {
 
     /** Version info of the program. */
     public static final String VERSION = "AddessBook Level 2 - Version 1.0";
-
+	public static final String DISPLAY_TAG_SESSION_HISTORY = "Tags added/removed during session";
+	private static final String TAG_SESSION_ADD_ACTION_SYMBOL = "+";
+	private static final String TAG_SESSION_REMOVE_ACTION_SYMBOL = "-";
+ 
     private TextUi ui;
     private StorageFile storage;
     private AddressBook addressBook;
@@ -72,10 +77,26 @@ public class Main {
 
     /** Prints the Goodbye message and exits. */
     private void exit() {
+    	printTagSessionHistory();
         ui.showGoodbyeMessage();
         System.exit(0);
     }
-
+	
+	/** Prints a concatenated list of tags added/deleted during that session. */
+	private void printTagSessionHistory() {
+		ui.showToUser(DISPLAY_TAG_SESSION_HISTORY);
+		for (Tagging tagging : addressBook.getTagSessionHistory()) {
+			TagAction action = tagging.getAction();
+			String actionSymbol;
+			if (action == TagAction.ADD) {
+				actionSymbol = TAG_SESSION_ADD_ACTION_SYMBOL;
+			} else {
+				actionSymbol = TAG_SESSION_REMOVE_ACTION_SYMBOL;
+			}
+            ui.showToUser(actionSymbol + " " + (tagging.getPerson()).getName() + " " + tagging.getTag());
+        }
+	}
+	
     /** Reads the user command and executes it, until the user issues the exit command.  */
     private void runCommandLoopUntilExitCommand() {
         Command command;

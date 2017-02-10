@@ -5,9 +5,13 @@ import seedu.addressbook.data.person.UniquePersonList.*;
 import seedu.addressbook.data.tag.UniqueTagList;
 import seedu.addressbook.data.tag.UniqueTagList.*;
 import seedu.addressbook.data.tag.Tag;
+import seedu.addressbook.data.tag.Tagging;
+import seedu.addressbook.data.tag.Tagging.TagAction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,7 +26,7 @@ public class AddressBook {
 
     private final UniquePersonList allPersons;
     private final UniqueTagList allTags; // can contain tags not attached to any person
-
+	private final List<Tagging> tagSessionHistory = new ArrayList<>();
     /**
      * Creates an empty address book.
      */
@@ -70,7 +74,7 @@ public class AddressBook {
     }
 
     /**
-     * Adds a person to the address book.
+     * Adds a person to the address book and all added tag entries to tag session during the session
      * Also checks the new person's tags and updates {@link #allTags} with any new tags found,
      * and updates the Tag objects in the person to point to those in {@link #allTags}.
      *
@@ -79,6 +83,8 @@ public class AddressBook {
     public void addPerson(Person toAdd) throws DuplicatePersonException {
         syncTagsWithMasterList(toAdd);
         allPersons.add(toAdd);
+		addTagSessionEntry(toAdd, toAdd.getTags(), TagAction.ADD);
+		
     }
 
     /**
@@ -105,12 +111,13 @@ public class AddressBook {
     }
 
     /**
-     * Removes the equivalent person from the address book.
+     * Removes the equivalent person from the address book and add all deleted tag entries to tag session.
      *
      * @throws PersonNotFoundException if no such Person could be found.
      */
     public void removePerson(ReadOnlyPerson toRemove) throws PersonNotFoundException {
         allPersons.remove(toRemove);
+		addTagSessionEntry(toRemove, toRemove.getTags(), TagAction.REMOVE);
     }
 
     /**
@@ -151,4 +158,21 @@ public class AddressBook {
                         && this.allPersons.equals(((AddressBook) other).allPersons)
                         && this.allTags.equals(((AddressBook) other).allTags));
     }
+	
+	/**
+     * Add a tag action to the tag session history to keep track of any tag changes
+	 */
+	public void addTagSessionEntry(ReadOnlyPerson person, UniqueTagList tags, TagAction action) {
+        for (Tag tag : tags) {
+			Tagging entry = new Tagging(person, tag, action); 
+			tagSessionHistory.add(entry);
+        }
+    }
+	
+	/**
+     * Get the history in tag session 
+     */
+	public List<Tagging> getTagSessionHistory() {
+		return tagSessionHistory;
+	}
 }

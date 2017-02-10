@@ -10,9 +10,8 @@ public class Contact {
 	
 	public final String contact;
 	private boolean isPrivate;
-	
-	private static String MESSAGE_CONSTRAINTS;
- 	private static String VALIDATION_REGEX;
+	private String MESSAGE_CONSTRAINTS;
+ 	private String VALIDATION_REGEX;
 	
 	/**
      * Validates given contact.
